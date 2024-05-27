@@ -69,7 +69,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: tfplan-${{ github.event.pull_request.number }}
-          path: tfplan
+          path: Terraform-Code/tfplan
 
         # comments the tfplan on the pr
       - name: Comment PR with Plan

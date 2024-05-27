@@ -78,6 +78,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           planfile: tfplan
+          working-directory: Terraform-Code
 
   terraform_apply:
     runs-on: ubuntu-latest

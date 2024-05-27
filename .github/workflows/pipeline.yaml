@@ -74,16 +74,10 @@ jobs:
         # comments the tfplan on the pr
       - name: Comment PR with Plan
         if: github.event_name == 'pull_request'
-        uses: peter-evans/create-or-update-comment@v3
+        uses: borchero/terraform-plan-comment@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            #### Terraform Plan for `${{ github.head_ref }}`
-            ```
-            $(cat tfplan)
-            ```
+          planfile: tfplan
 
   terraform_apply:
     runs-on: ubuntu-latest

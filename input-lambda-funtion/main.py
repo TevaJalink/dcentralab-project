@@ -6,6 +6,8 @@ from alembic import command
 from alembic.config import Config
 
 def lambda_handler(event, context):
+    # lambda handler contains the script logic
+    # inserts input vales received from api gateway to db
     id = event['queryStringParameters']['id']
     GivenName = event['queryStringParameters']['GivenName']
     Surname = event['queryStringParameters']['Surname']
@@ -31,6 +33,8 @@ def lambda_handler(event, context):
 
 
 def generate_db_url():
+    # function used to generate the db url object, first retrives the aws rds proxy token
+    # and then uses sql alchemy to create the url object
     aws_region = os.getenv('region')
     postgres_endpoint = os.getenv('rds_endpoint')
     DB_username = os.getenv('username')
@@ -54,6 +58,7 @@ def generate_db_url():
     return db_url
 
 def insert_values(engine, id, GivenName, Surname):
+    # inserts values to hw table
     metadata = sa.MetaData()
     hw_table = sa.Table("hw", metadata, autoload_with=engine)
     stmt = hw_table.insert().values(id=id ,GivenName=GivenName, Surname=Surname)
@@ -62,11 +67,15 @@ def insert_values(engine, id, GivenName, Surname):
     return result
 
 def run_migrations():
+    # uses the alembic library lambda-app to create the table
+    # the env.py file contains the generate_db_url function as "get_url"
+    # so no values are passed to the alembic.ini
     alembic_cfg = Config("alembic.ini")
     response = command.upgrade(alembic_cfg, "head")
     return response
 
 def drop_all_tables(engine):
+    # used for testing
     metadata = sa.MetaData()
     user_table = sa.Table('hw', metadata, autoload_with=engine)
     return user_table.drop(engine)

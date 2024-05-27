@@ -110,12 +110,11 @@ jobs:
         working-directory: Terraform-Code
 
     steps: 
+        # downloading the tf plan artifact
       - name: Download Plan Artifact
-        uses: dawidd6/action-download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow: pipeline.yaml
-          pr: ${{github.event.pull_request.number}}
           name: tfplan-${{ github.event.pull_request.number }}
         
         # apply the terraform configuration

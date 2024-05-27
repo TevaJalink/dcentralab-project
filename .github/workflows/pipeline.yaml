@@ -34,7 +34,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ROLE }}
           role-session-name: GitHub-OIDC-TERRAFORM
-          aws-region: $aws_region
+          aws-region: ${{ env.aws_region }} 
 
         # setup terrafrom version 1.3.6 on the ubuntu machine
       - name: Setup Terraform
@@ -69,14 +69,14 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: tfplan-${{ github.event.pull_request.number }}
-          path: tfplan-${{ github.event.pull_request.number }}
+          path: tfplan
 
         # comments the tfplan on the pr
       - name: Comment PR with Plan
         if: github.event_name == 'pull_request'
-        uses: dflook/terraform-plan@v1
+        uses: blinqas/tf-plan-pr-comment@v1
         with:
-          path: tfplan-${{ github.event.pull_request.number }}
+          output_file: tfplan-${{ github.event.pull_request.number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -100,7 +100,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ROLE }}
           role-session-name: GitHub-OIDC-TERRAFORM
-          aws-region: $aws_region
+          aws-region: ${{ env.aws_region }} 
 
         # setup terrafrom version 1.3.6 on the ubuntu machine
       - name: Setup Terraform

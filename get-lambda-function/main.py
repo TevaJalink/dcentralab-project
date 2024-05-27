@@ -3,6 +3,8 @@ import boto3.session
 import sqlalchemy as sa
 
 def lambda_handler(event, context):
+    # lambda handler contains the script logic
+    # after connecting to the url fatches all the info on table hw and sends it to api gateway
     ssl_context = ssl.create_default_context()
     db_url = generate_db_url()
     engine = sa.create_engine(db_url, connect_args={"ssl_context": ssl_context})
@@ -17,6 +19,8 @@ def lambda_handler(event, context):
     }
 
 def generate_db_url():
+    # function used to generate the db url object, first retrives the aws rds proxy token
+    # and then uses sql alchemy to create the url object
     aws_region = os.getenv('region')
     postgres_endpoint = os.getenv('rds_endpoint')
     DB_username = os.getenv('username')

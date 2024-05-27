@@ -82,7 +82,7 @@ jobs:
           body: |
             #### Terraform Plan for `${{ github.head_ref }}`
             ```
-            ${{ steps.show-plan.outputs.result }}
+            ${{ steps.plan.outputs.result }}
             ```
 
   terraform_apply:

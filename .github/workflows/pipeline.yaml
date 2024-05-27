@@ -66,29 +66,19 @@ jobs:
         # upload the tfplan to be consumed later by the apply command
       - name: Upload Plan Artifact
         if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: tfplan-${{ github.event.pull_request.number }}
           path: Terraform-Code/tfplan
 
-        # sets the tfplan vile as an output variable
-      - name: Read Terraform Plan
-        id: read-plan
-        run: echo "::set-output name=result::$(terraform show -no-color tfplan)"
-
         # comments the tfplan on the pr
       - name: Comment PR with Plan
         if: github.event_name == 'pull_request'
-        uses: peter-evans/create-or-update-comment@v3
+        uses: blinqas/tf-plan-pr-comment@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            #### Terraform Plan for `${{ github.head_ref }}`
-            ```
-            ${{ steps.read-plan.outputs.result }}
-            ```
+          output_file: Terraform-Code/tfplan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   terraform_apply:
     runs-on: ubuntu-latest

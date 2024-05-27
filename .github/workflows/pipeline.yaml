@@ -76,7 +76,7 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: blinqas/tf-plan-pr-comment@v1
         with:
-          output_file: tfplan
+          output_file: Terraform-Code/tfplan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

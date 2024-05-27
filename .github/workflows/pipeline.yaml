@@ -22,6 +22,9 @@ jobs:
     defaults:
       run:
         working-directory: Terraform-Code
+    
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
         # step to clone the git repo to the ubuntu machine
@@ -60,7 +63,7 @@ jobs:
         # plan the terraform deployment
       - name: Terraform Plan
         id: plan
-        run: terraform plan -out=tfplan -no-color -json
+        run: terraform plan -out=tfplan -no-color
         if: github.event_name == 'pull_request'
 
         # upload the tfplan to be consumed later by the apply command
@@ -74,11 +77,9 @@ jobs:
         # comments the tfplan on the pr
       - name: Comment PR with Plan
         if: github.event_name == 'pull_request'
-        uses: borchero/terraform-plan-comment@v1
+        uses: dflook/terraform-plan@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          planfile: tfplan
-          working-directory: Terraform-Code
+          path: tfplan
 
   terraform_apply:
     runs-on: ubuntu-latest

@@ -77,9 +77,11 @@ jobs:
         # comments the tfplan on the pr
       - name: Comment PR with Plan
         if: github.event_name == 'pull_request'
-        uses: dflook/terraform-plan@v1
+        uses: machine-learning-apps/pr-comment@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          path: Terraform-Code/tfplan
+          path: tfplan
 
   terraform_apply:
     runs-on: ubuntu-latest

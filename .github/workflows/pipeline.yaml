@@ -111,6 +111,24 @@ jobs:
         working-directory: Terraform-Code
 
     steps: 
+     # step to clone the git repo to the ubuntu machine
+      - name: Git Checkout
+        uses: actions/checkout@v3
+        
+        # configuring the credentials for terraform
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHub-OIDC-TERRAFORM
+          aws-region: ${{ env.aws_region }} 
+
+        # setup terrafrom version 1.3.6 on the ubuntu machine
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.3.6
+
         # downloading the tf plan artifact
       - name: Download Plan Artifact
         uses: dawidd6/action-download-artifact@v3

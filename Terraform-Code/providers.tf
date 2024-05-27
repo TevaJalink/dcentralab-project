@@ -11,7 +11,7 @@ terraform {
   }
   backend "s3" {
     bucket         = "dcentralab-hw-project"
-    key            = "/prod/dcentralab.tfstate"
+    key            = "prod/dcentralab.tfstate"
     region         = "us-east-1"
     dynamodb_table = "dcentralab-table"
   }

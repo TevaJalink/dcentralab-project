@@ -74,9 +74,9 @@ jobs:
         # comments the tfplan on the pr
       - name: Comment PR with Plan
         if: github.event_name == 'pull_request'
-        uses: dflook/terraform-comment@v1
+        uses: blinqas/tf-plan-pr-comment@v1
         with:
-          path: tfplan
+          output_file: ${{ github.workspace }}/Terraform-Code/tfplan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

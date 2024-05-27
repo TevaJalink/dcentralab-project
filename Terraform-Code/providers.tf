@@ -14,9 +14,6 @@ terraform {
     key            = "/prod/dcentralab.tfstate"
     region         = var.aws_region
     dynamodb_table = "dcentralab-table"
-    assume_role {
-      role_arn = "arn:aws:iam::654654442933:role/dcentralab-project-oidc-github-actions"
-  }
   }
 }
 

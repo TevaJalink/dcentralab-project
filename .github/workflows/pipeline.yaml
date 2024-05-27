@@ -74,6 +74,10 @@ jobs:
           name: tfplan-${{ github.event.pull_request.number }}
           path: Terraform-Code/tfplan
 
+      - name: Show Terraform Plan
+        id: show-plan
+        run: terraform show -no-color tfplan > plan.txt
+
         # comments the tfplan on the pr
       - name: Comment PR with Plan
         if: github.event_name == 'pull_request'
@@ -81,12 +85,14 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync('Terraform-Code/plan.txt', 'utf8');
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '${{ steps.plan.output.tfplan }}'
-              })
+              body: `#### Terraform Plan for \`${{ github.head_ref }}\`\n\`\`\`hcl\n${plan}\n\`\`\``
+            });
         
 
   terraform_apply:

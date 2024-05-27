@@ -114,7 +114,7 @@ jobs:
       - name: Download Plan Artifact
         uses: actions/download-artifact@v4
         with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{secrets.GITHUB_TOKEN}}
           name: tfplan-${{ github.event.pull_request.number }}
         
         # apply the terraform configuration

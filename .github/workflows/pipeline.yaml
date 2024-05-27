@@ -60,7 +60,7 @@ jobs:
         # plan the terraform deployment
       - name: Terraform Plan
         id: plan
-        run: terraform plan -out=tfplan -no-color
+        run: terraform plan -out=tfplan -no-color -json
         if: github.event_name == 'pull_request'
 
         # upload the tfplan to be consumed later by the apply command

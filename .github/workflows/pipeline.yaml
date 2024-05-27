@@ -129,6 +129,11 @@ jobs:
         with:
           terraform_version: 1.3.6
 
+        # step to initialize the terraform configuration
+      - name: Terraform Initialize
+        id: init
+        run: terraform init
+
         # downloading the tf plan artifact
       - name: Download Plan Artifact
         uses: dawidd6/action-download-artifact@v3

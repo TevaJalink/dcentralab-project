@@ -79,7 +79,7 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: dflook/terraform-plan@v1
         with:
-          path: tfplan
+          path: Terraform-Code/tfplan
 
   terraform_apply:
     runs-on: ubuntu-latest

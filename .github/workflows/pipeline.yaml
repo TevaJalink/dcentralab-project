@@ -1,10 +1,10 @@
 name: "Build and Deploy"
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
+    types:
+      - opened
+      - closed
 permissions:
       id-token: write # for oidc connection to aws
       contents: read # required for actions/checkout
@@ -30,6 +30,7 @@ jobs:
         # step to clone the git repo to the ubuntu machine
       - name: Git Checkout
         uses: actions/checkout@v3
+        
 
         # configuring the credentials for terraform
       - name: Configure AWS Credentials
@@ -47,6 +48,7 @@ jobs:
 
         # formatting the code
       - name: Terraform Formate
+        if: github.event.action == 'opened'
         id: fmt
         run: terraform fmt
       
@@ -57,30 +59,32 @@ jobs:
 
       # step to validate the terraform code
       - name: Terraform Validate
+        if: github.event.action == 'opened'
         id: validate
         run: terraform validate -no-color
 
         # plan the terraform deployment
       - name: Terraform Plan
+        if: github.event.action == 'opened'
         id: plan
         run: terraform plan -out=tfplan -no-color
-        if: github.event_name == 'pull_request'
 
         # upload the tfplan to be consumed later by the apply command
       - name: Upload Plan Artifact
-        if: github.event_name == 'pull_request'
+        if: github.event.action == 'opened'
         uses: actions/upload-artifact@v4
         with:
           name: tfplan-${{ github.event.pull_request.number }}
           path: Terraform-Code/tfplan
 
       - name: Show Terraform Plan
+        if: github.event.action == 'opened'
         id: show-plan
         run: terraform show -no-color tfplan > plan.txt
 
         # comments the tfplan on the pr
       - name: Comment PR with Plan
-        if: github.event_name == 'pull_request'
+        if: github.event.action == 'opened'
         uses: actions/github-script@v6.4.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
@@ -97,32 +101,15 @@ jobs:
 
   terraform_apply:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event.action == 'closed'
+    needs: terraforn_plan
 
     # sets the defaults working directory to Terraform-Code
     defaults:
       run:
         working-directory: Terraform-Code
 
-    steps:
-        # download repo code
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-        # configurs the terraform aws cred
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          role-session-name: GitHub-OIDC-TERRAFORM
-          aws-region: ${{ env.aws_region }} 
-
-        # setup terrafrom version 1.3.6 on the ubuntu machine
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.3.6
-
+    steps: 
         # download the tfplan file
       - name: Download Plan Artifact
         uses: actions/download-artifact@v2

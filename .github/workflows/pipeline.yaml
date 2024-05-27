@@ -111,11 +111,18 @@ jobs:
 
     steps: 
         # download the tfplan file
+      # - name: Download Plan Artifact
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: tfplan-${{ github.event.pull_request.number }}
+      #     path: .
+
       - name: Download Plan Artifact
-        uses: actions/download-artifact@v2
+        uses: dawidd6/action-download-artifact@v2
         with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          pr: ${{github.event.pull_request.number}}
           name: tfplan-${{ github.event.pull_request.number }}
-          path: .
         
         # apply the terraform configuration
       - name: Terraform Apply

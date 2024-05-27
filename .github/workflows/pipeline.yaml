@@ -140,4 +140,4 @@ jobs:
         
         # apply the terraform configuration
       - name: Terraform Apply
-        run: terraform apply tfplan-${{ github.event.pull_request.number }} -no-color
+        run: terraform apply tfplan -no-color

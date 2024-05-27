@@ -71,6 +71,11 @@ jobs:
           name: tfplan-${{ github.event.pull_request.number }}
           path: Terraform-Code/tfplan
 
+        # sets the tfplan vile as an output variable
+      - name: Read Terraform Plan
+        id: read-plan
+        run: echo "::set-output name=result::$(terraform show -no-color tfplan)"
+
         # comments the tfplan on the pr
       - name: Comment PR with Plan
         if: github.event_name == 'pull_request'
@@ -82,7 +87,7 @@ jobs:
           body: |
             #### Terraform Plan for `${{ github.head_ref }}`
             ```
-            ${{ steps.plan.outputs.result }}
+            ${{ steps.read-plan.outputs.result }}
             ```
 
   terraform_apply:

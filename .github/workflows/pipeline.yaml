@@ -133,9 +133,10 @@ jobs:
       - name: Download Plan Artifact
         uses: dawidd6/action-download-artifact@v3
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github_token: ${{secrets.GITHUB_TOKEN}}
           pr: ${{github.event.pull_request.number}}
           name: tfplan-${{ github.event.pull_request.number }}
+          path: Terraform-Code
         
         # apply the terraform configuration
       - name: Terraform Apply

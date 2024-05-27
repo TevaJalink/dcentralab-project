@@ -141,5 +141,3 @@ jobs:
         # apply the terraform configuration
       - name: Terraform Apply
         run: terraform apply tfplan -no-color
-
-# test-pr-comment

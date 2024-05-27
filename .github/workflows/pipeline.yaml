@@ -69,7 +69,7 @@ jobs:
         # comments the tfplan on the pr
       - name: Comment PR with Plan
         if: github.event_name == 'pull_request'
-        uses: dflook/terraform-github-actions/comment@v1
+        uses: dflook/terraform-plan@v1
         with:
           path: tfplan-${{ github.event.pull_request.number }}
         env:

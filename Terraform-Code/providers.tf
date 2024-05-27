@@ -19,9 +19,6 @@ terraform {
 
 provider "aws" {
   region     = var.aws_region
-  assume_role {
-    role_arn = "arn:aws:iam::654654442933:role/dcentralab-project-oidc-github-actions"
-  }
 }
 
 data "aws_caller_identity" "current" {}

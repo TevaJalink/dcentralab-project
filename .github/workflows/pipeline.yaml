@@ -152,7 +152,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const output = require('Terraform-Code/tfoutput.json');
+            const output = require('./Terraform-Code/tfoutput.json');
             const githubContext = github;
             const comment = `Terraform Output: \n${JSON.stringify(output, null, 2)}`;
             githubContext.issues.createComment({

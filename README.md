@@ -23,3 +23,5 @@ The terraform deploys:
 GitHub action is used to deploy the application and is divided into 2:
 - PR opened: when the PR first open the workflow is triggered to run terraform fmt,validate,plan. Afterwards the terraform plan is saved as an artifact for the terraform apply command and commented on the PR.
 - PR closes: When the PR is approved the workflow triggeres again, this time it retrives the artifact from previous workflow and uses it to run terraform apply.
+
+The terraform output containing the URL's for the Api GateWays will also be commented on the PR.

@@ -141,3 +141,23 @@ jobs:
         # apply the terraform configuration
       - name: Terraform Apply
         run: terraform apply tfplan -no-color
+
+        # gets the terraform outputs
+      - name: Get Terraform Output
+        run: terraform output -json > tfoutput.json
+
+        # post the terraform outputs as pr comments
+      - name: Post PR Comment
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = require('./tfoutput.json');
+            const { context } = github;
+            const comment = `Terraform Output: \n${JSON.stringify(output, null, 2)}`;
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

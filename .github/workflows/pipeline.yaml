@@ -144,7 +144,7 @@ jobs:
 
         # gets the terraform outputs
       - name: Get Terraform Output
-        run: terraform output -json > tfoutput.json
+        run: terraform output > tfoutput.txt
 
         # post the terraform outputs as pr comments
       - name: Post PR Comment
@@ -154,11 +154,9 @@ jobs:
           script: |
             const fs = require('fs');
             const output = fs.readFileSync('./Terraform-Code/tfoutput.json', 'utf8');
-            const parsedOutput = JSON.parse(output);
-            const comment = `Terraform Output: \n${JSON.stringify(parsedOutput, null, 2)}`;
             github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: comment
+              body: `Terraform Output: \n${JSON.stringify(parsedOutput, null, 2)}`;
             });

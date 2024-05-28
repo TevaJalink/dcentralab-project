@@ -153,8 +153,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            const output = JSON.parse(fs.readFileSync('./Terraform-Code/tfoutput.json', 'utf8'));
-            const comment = `Terraform Output: \n${JSON.stringify(output, null, 2)}`;
+            const output = fs.readFileSync('./Terraform-Code/tfoutput.json', 'utf8');
+            const parsedOutput = JSON.parse(output);
+            const comment = `Terraform Output: \n${JSON.stringify(parsedOutput, null, 2)}`;
             github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,

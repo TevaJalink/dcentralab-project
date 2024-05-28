@@ -154,9 +154,10 @@ jobs:
           script: |
             const fs = require('fs');
             const output = fs.readFileSync('./Terraform-Code/tfoutput.txt', 'utf8');
-            github.issues.createComment({
+            const comment = `Terraform Output: \n\`\`\`\n${output}\n\`\`\``;
+            github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `Terraform Output: \n\`\`\`\n${output}\n\`\`\``
+              body: comment
             });

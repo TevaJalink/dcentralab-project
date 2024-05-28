@@ -153,11 +153,11 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = require('./tfoutput.json');
-            const { context } = github;
+            const githubContext = github;
             const comment = `Terraform Output: \n${JSON.stringify(output, null, 2)}`;
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+            githubContext.issues.createComment({
+              issue_number: githubContext.context.issue.number,
+              owner: githubContext.context.repo.owner,
+              repo: githubContext.context.repo.repo,
               body: comment
             });

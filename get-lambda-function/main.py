@@ -3,20 +3,27 @@ import boto3.session
 import sqlalchemy as sa
 
 def lambda_handler(event, context):
-    # lambda handler contains the script logic
-    # after connecting to the url fatches all the info on table hw and sends it to api gateway
-    ssl_context = ssl.create_default_context()
-    db_url = generate_db_url()
-    engine = sa.create_engine(db_url, connect_args={"ssl_context": ssl_context})
-    metadata = sa.MetaData()
-    hw = sa.Table('hw',metadata,autoload_with=engine)
-    query = sa.select(hw)
-    with engine.connect() as connection:
-        result = connection.execute(query).fetchall()
-    return {
-        "statusCode": 200,
-        "body": json.dumps([dict(row) for row in result])
-    }
+    try:
+        # Lambda handler contains the script logic
+        ssl_context = ssl.create_default_context()
+        db_url = generate_db_url()
+        engine = sa.create_engine(db_url, connect_args={"ssl_context": ssl_context})
+        metadata = sa.MetaData()
+        hw = sa.Table('hw', metadata, autoload_with=engine)
+        query = sa.select(hw)
+        with engine.connect() as connection:
+            result = connection.execute(query).fetchall()
+        # Convert the result to a list of dictionaries
+        result_dicts = [dict(row._mapping) for row in result]
+        return {
+            "statusCode": 200,
+            "body": json.dumps(result_dicts)
+        }
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "body": json.dumps({"error": str(e)})
+        }
 
 def generate_db_url():
     # function used to generate the db url object, first retrives the aws rds proxy token

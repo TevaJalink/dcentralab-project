@@ -7,29 +7,39 @@ from alembic.config import Config
 
 def lambda_handler(event, context):
     # lambda handler contains the script logic
-    # inserts input vales received from api gateway to db
-    id = event['queryStringParameters']['id']
-    GivenName = event['queryStringParameters']['GivenName']
-    Surname = event['queryStringParameters']['Surname']
+    try:
+        # Extract input values received from API Gateway
+        id = event['queryStringParameters']['id']
+        GivenName = event['queryStringParameters']['GivenName']
+        Surname = event['queryStringParameters']['Surname']
 
-    ssl_context = ssl.create_default_context()
-    db_url = generate_db_url()
-    engine = sa.create_engine(db_url, connect_args={"ssl_context": ssl_context})
-    if sa.inspect(engine).has_table("hw") is False:
-        run_migrations()
-        # print will show in cloudwatch logs
-        print("Table was created")
+        # Prepare SSL context and generate database URL
+        ssl_context = ssl.create_default_context()
+        db_url = generate_db_url()
 
-    if sa.inspect(engine).has_table("hw") is True:
-        try:
-            insert_values(engine, id, GivenName, Surname)
-        except Exception as e:
-            print(f"Error with the insert definition: {e}")
-            sys.exit(1)
-    return {
-        "statusCode": 200,
-        "body": json.dumps("Function completed successfully")
-    }
+        # Connect to the database
+        engine = sa.create_engine(db_url, connect_args={"ssl_context": ssl_context})
+
+        # Run migrations if the table does not exist
+        if not sa.inspect(engine).has_table("hw"):
+            run_migrations(engine)
+            print("Table was created")
+
+        # Insert values if the table exists
+        if sa.inspect(engine).has_table("hw"):
+            result = insert_values(engine, id, GivenName, Surname)
+            print(f"Rows inserted: {result}")
+
+        return {
+            "statusCode": 200,
+            "body": json.dumps("Function completed successfully")
+        }
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return {
+            "statusCode": 500,
+            "body": json.dumps(f"Error occurred: {e}")
+        }
 
 
 def generate_db_url():
@@ -64,7 +74,8 @@ def insert_values(engine, id, GivenName, Surname):
     stmt = hw_table.insert().values(id=id ,GivenName=GivenName, Surname=Surname)
     with engine.connect() as conn:
         result = conn.execute(stmt)
-    return result
+        conn.commit()
+    return result.rowcount
 
 def run_migrations():
     # uses the alembic library lambda-app to create the table

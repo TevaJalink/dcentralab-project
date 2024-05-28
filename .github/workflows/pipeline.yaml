@@ -142,19 +142,15 @@ jobs:
       - name: Terraform Apply
         run: terraform apply tfplan -no-color
 
-        # gets the terraform outputs
-      - name: Get Terraform Output
-        run: terraform output > tfoutput.txt
-
         # post the terraform outputs as pr comments
       - name: Post PR Comment
         uses: actions/github-script@v6.4.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const fs = require('fs');
-            const output = fs.readFileSync('./Terraform-Code/tfoutput.txt', 'utf8');
-            const formattedOutput = output.split('\n').map(line => line.trim()).join('\n');
+            const { execSync } = require('child_process');
+            const output = execSync('terraform output', { encoding: 'utf8' });
+            const formattedOutput = output.trim();
             const comment = `Terraform Output: \n\`\`\`\n${formattedOutput}\n\`\`\``;
             github.rest.issues.createComment({
               issue_number: context.issue.number,

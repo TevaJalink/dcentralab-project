@@ -149,7 +149,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { execSync } = require('child_process');
-            const output = execSync('terraform output', { encoding: 'utf8' });
+            const output = execSync('terraform output', { encoding: 'utf8', cwd: 'Terraform-Code' });
             const formattedOutput = output.trim();
             const comment = `Terraform Output: \n\`\`\`\n${formattedOutput}\n\`\`\``;
             github.rest.issues.createComment({
